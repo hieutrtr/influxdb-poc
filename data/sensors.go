@@ -7,14 +7,24 @@ import (
 	"time"
 )
 
-type SensorRecord struct {
-	Value     float64 `json:"value"`
-	Timestamp int64   `json:"timestamp"`
+type Sensor struct {
+	Name         string        `json:"name"`
+	Measurements []Measurement `json:"measurement"`
 }
 
-type Sensor struct {
-	Name    string         `json:"name"`
-	Records []SensorRecord `json:"records"`
+type Tag struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+type Field struct {
+	Key   string  `json:"key"`
+	Value float64 `json:"value"`
+}
+type Measurement struct {
+	Name      string  `json:"name"`
+	Fields    []Field `json:"fields"`
+	Timestamp int64   `json:"timestamp"`
+	Tags      []Tag   `json:"tags"`
 }
 
 type Sensors map[string]*Sensor
@@ -47,8 +57,20 @@ func LoadAllSensors() (Sensors, error) {
 					Name: name,
 				}
 			}
-			sensorsMap[name].Records = append(sensorsMap[name].Records, SensorRecord{
-				Value:     stringToFloat(record[i]),
+			sensorsMap[name].Measurements = append(sensorsMap[name].Measurements, Measurement{
+				Name: name,
+				Fields: []Field{
+					{
+						Key:   "value",
+						Value: stringToFloat(record[i]),
+					},
+				},
+				Tags: []Tag{
+					{
+						Key:   "sensor",
+						Value: name,
+					},
+				},
 				Timestamp: dateToTimestamp(record[1]),
 			})
 		}

@@ -18,8 +18,8 @@ func TestLoadAllSensors(t *testing.T) {
 		t.Errorf("Error loading sensors: %v", err)
 	}
 	for _, sensor := range sensors {
-		t.Logf("Sensor: %v", sensor.Records[0])
-		require.NotEmpty(t, sensor.Records[0])
+		t.Logf("Sensor: %v", sensor.Measurements[0])
+		require.NotEmpty(t, sensor.Measurements[0])
 	}
 	require.Equal(t, 1, 1)
 }
