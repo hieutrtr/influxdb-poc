@@ -29,9 +29,8 @@ type Measurement struct {
 
 type Sensors map[string]*Sensor
 
-func LoadAllSensors() (Sensors, error) {
+func LoadAllSensors(filePath string) (Sensors, error) {
 	// Load csv file
-	filePath := "../resources/sensor.csv"
 	file, err := os.Open(filePath)
 	if err != nil {
 		return nil, err
@@ -46,7 +45,7 @@ func LoadAllSensors() (Sensors, error) {
 	// Convert records to Sensor
 	var sensorsMap Sensors
 	firstColumn := records[0]
-	for _, record := range records[1:20] {
+	for _, record := range records[1:2000] {
 		for i := 2; i < len(record); i++ {
 			name := firstColumn[i]
 			if sensorsMap == nil {

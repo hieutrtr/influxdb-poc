@@ -13,7 +13,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestLoadAllSensors(t *testing.T) {
-	sensors, err := LoadAllSensors()
+	sensors, err := LoadAllSensors("../resources/sensor.csv")
 	if err != nil {
 		t.Errorf("Error loading sensors: %v", err)
 	}
