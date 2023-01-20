@@ -29,23 +29,26 @@ type Measurement struct {
 
 type Sensors map[string]*Sensor
 
-func LoadAllSensors(filePath string) (Sensors, error) {
+func LoadAllSensors(filePath string, meaChan chan<- Measurement, limit int) error {
 	// Load csv file
 	file, err := os.Open(filePath)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer file.Close()
 	// Parse csv file
 	parser := csv.NewReader(file)
 	records, err := parser.ReadAll()
 	if err != nil {
-		return nil, err
+		return err
 	}
 	// Convert records to Sensor
 	var sensorsMap Sensors
 	firstColumn := records[0]
-	for _, record := range records[1:2000] {
+	if limit == 0 || limit > len(records) {
+		limit = len(records)
+	}
+	for _, record := range records[1:limit] {
 		for i := 2; i < len(record); i++ {
 			name := firstColumn[i]
 			if sensorsMap == nil {
@@ -56,7 +59,7 @@ func LoadAllSensors(filePath string) (Sensors, error) {
 					Name: name,
 				}
 			}
-			sensorsMap[name].Measurements = append(sensorsMap[name].Measurements, Measurement{
+			meaChan <- Measurement{
 				Name: name,
 				Fields: []Field{
 					{
@@ -71,10 +74,10 @@ func LoadAllSensors(filePath string) (Sensors, error) {
 					},
 				},
 				Timestamp: dateToTimestamp(record[1]),
-			})
+			}
 		}
 	}
-	return sensorsMap, nil
+	return nil
 }
 
 func stringToFloat(s string) float64 {

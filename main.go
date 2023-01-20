@@ -14,21 +14,28 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	// influxClient := influxdb2.NewClient("http://localhost:8086", conf.InfluxDBToken)
+	influxClient := influxdb2.NewClientWithOptions("http://localhost:8086", conf.InfluxDBToken, influxdb2.DefaultOptions().SetFlushInterval(3000))
+
+	store := process.NewMeasurementStore("pump_temp_dev4", influxClient.WriteAPI(conf.InfluxDBOrg, conf.InfluxDBBucket))
+
 	fmt.Println("loaded config")
-	sensors, err := data.LoadAllSensors("./resources/sensor.csv")
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("loaded sensors")
-	influxClient := influxdb2.NewClient("http://localhost:8086", conf.InfluxDBToken)
-	defer influxClient.Close()
-	store := process.NewMeasurementStore("pump_temp_dev2", influxClient.WriteAPI(conf.InfluxDBOrg, conf.InfluxDBBucket))
-	for _, sensor := range sensors {
-		for _, measurement := range sensor.Measurements {
+	meaChan := make(chan data.Measurement)
+	defer close(meaChan)
+
+	go func() {
+		for measurement := range meaChan {
 			fmt.Println(measurement)
 			measurement.Timestamp += 151000000
 			store.Write(measurement)
 		}
+		store.Flush()
+		influxClient.Close()
+	}()
+
+	if err := data.LoadAllSensors("./resources/sensor.csv", meaChan, 0); err != nil {
+		panic(err)
 	}
-	store.Flush()
+	fmt.Println("loaded sensors")
 }

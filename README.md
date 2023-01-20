@@ -6,6 +6,7 @@ Im going to try influxdb on some sensors data.
   ![](resources/dataset.png)
 - seperate datasets files for each sensors and machine status as I wish to simulate multiple measurements.
 - create measurements for all sensors as format (machine,sensor=sensor1 value=xxxx timestamp)
+- Load data via channel and goroutine.
 
 #### Install InfluxDB
 following download guide in `https://portal.influxdata.com/downloads/`
@@ -14,3 +15,8 @@ following download guide in `https://portal.influxdata.com/downloads/`
 - create measurements.
 - stream data to measurement.
 - create query all data with mean values in minute.
+
+#### Definition of Measurement on platform
+- Define Measurement name
+- Define tags
+- Upload file with fields as columns and value in rows

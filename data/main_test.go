@@ -13,13 +13,17 @@ func TestMain(m *testing.M) {
 }
 
 func TestLoadAllSensors(t *testing.T) {
-	sensors, err := LoadAllSensors("../resources/sensor.csv")
+	meaChan := make(chan Measurement)
+	defer close(meaChan)
+	go func(tt *testing.T, b bool, i ...interface{}) {
+		for mea := range meaChan {
+			tt.Logf("Measurement: %v", mea)
+			require.NotEmpty(tt, mea)
+		}
+	}(t, true)
+	err := LoadAllSensors("../resources/sensor.csv", meaChan, 100)
 	if err != nil {
 		t.Errorf("Error loading sensors: %v", err)
 	}
-	for _, sensor := range sensors {
-		t.Logf("Sensor: %v", sensor.Measurements[0])
-		require.NotEmpty(t, sensor.Measurements[0])
-	}
-	require.Equal(t, 1, 1)
+	require.Equal(t, 1, 2)
 }
