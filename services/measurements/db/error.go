@@ -21,3 +21,23 @@ func (e *dbError) Error() string {
 func (e *dbError) Code() int {
 	return e.code
 }
+
+type ErrMeasurementNotFound struct {
+	err  string
+	code int
+}
+
+func NewErrMeasurementNotFound(err string, code int) error {
+	return &ErrMeasurementNotFound{
+		err:  err,
+		code: code,
+	}
+}
+
+func (e *ErrMeasurementNotFound) Error() string {
+	return fmt.Sprintf("ErrMeasurementNotFound: %s", e.err)
+}
+
+func (e *ErrMeasurementNotFound) Code() int {
+	return e.code
+}

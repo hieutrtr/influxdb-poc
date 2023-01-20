@@ -10,15 +10,16 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+//go:generate mockgen -destination=../mocks/mock_store.go -package=mocks github.com/hieutrtr/influxdb-poc/services/measurements/db Store
 type Store interface {
-	CreateMeasurement(context.Context, Measurement) error
-	GetMeasurement(context.Context, string) (*Measurement, error)
+	CreateMeasurement(context.Context, Measurement) (*MeasurementID, error)
+	GetMeasurement(context.Context, MeasurementID) (*Measurement, error)
 	ListMeasurements(context.Context, int64, int64) ([]Measurement, error)
 	ArchiveMeasurement(context.Context, string) error
 }
 
 type Measurement struct {
-	ID          primitive.ObjectID `bson:"_id,omitempty""`
+	ID          primitive.ObjectID `bson:"_id"`
 	Name        string             `bson:"name,omitempty"`
 	Description string             `bson:"description,omitempty"`
 	Status      string             `bson:"status,omitempty"`
@@ -51,10 +52,9 @@ type MeasurementID struct {
 	ID primitive.ObjectID `bson:"_id"`
 }
 
-func (m *MeasurementStore) GetMeasurement(ctx context.Context, id string) (*Measurement, error) {
+func (m *MeasurementStore) GetMeasurement(ctx context.Context, meaID MeasurementID) (*Measurement, error) {
 	var measurement Measurement
-	oid, err := primitive.ObjectIDFromHex(id)
-	err = m.collection.FindOne(ctx, MeasurementID{ID: oid}).Decode(&measurement)
+	err := m.collection.FindOne(ctx, MeasurementID{ID: meaID.ID}).Decode(&measurement)
 	if err != nil {
 		return nil, NewDBError(err.Error(), 500)
 	}
@@ -81,10 +81,7 @@ func (m *MeasurementStore) ArchiveMeasurement(ctx context.Context, id string) er
 	if err != nil {
 		return NewDBError(err.Error(), 400)
 	}
-	var measurement Measurement
-	measurement.Status = "archived"
-	measurement.UpdatedAt = time.Now()
-	_, err = m.collection.UpdateOne(ctx, MeasurementID{ID: oid}, bson.M{"$set": measurement})
+	_, err = m.collection.UpdateOne(ctx, MeasurementID{ID: oid}, bson.M{"$set": bson.M{"status": "archived", "updated_at": time.Now()}})
 	if err != nil {
 		return NewDBError(err.Error(), 500)
 	}

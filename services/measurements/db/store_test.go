@@ -28,7 +28,7 @@ func TestGetMeasurement(t *testing.T) {
 	t.Logf("TestGetMeasurement")
 	arg := CreateMeasurement(t)
 	t.Logf("Measurement: %v", arg)
-	mea, err := testStore.GetMeasurement(context.TODO(), arg.ID.Hex())
+	mea, err := testStore.GetMeasurement(context.TODO(), MeasurementID{ID: arg.ID})
 	t.Logf("Inserted Measurement: %v", mea)
 	require.NoError(t, err)
 	require.Equal(t, arg.ID, mea.ID)
@@ -55,7 +55,7 @@ func TestArchiveMeasurement(t *testing.T) {
 	err := testStore.ArchiveMeasurement(context.TODO(), arg.ID.Hex())
 	t.Logf("Inserted Measurement: %v", arg)
 	require.NoError(t, err)
-	mea, err := testStore.GetMeasurement(context.TODO(), arg.ID.Hex())
+	mea, err := testStore.GetMeasurement(context.TODO(), MeasurementID{ID: arg.ID})
 	require.NoError(t, err)
 	require.Equal(t, "archived", mea.Status)
 }
