@@ -59,7 +59,7 @@ func (m *MeasurementStore) GetMeasurement(ctx context.Context, meaID Measurement
 		return nil, NewDBError(err.Error(), 500)
 	}
 	if measurement.Status == "deleted" {
-		return nil, NewDBError("measurement not found", 404)
+		return nil, NewErrMeasurementNotFound("measurement not found", 404)
 	}
 	return &measurement, nil
 }
