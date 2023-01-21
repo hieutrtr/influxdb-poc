@@ -1,3 +1,4 @@
 resources/sensor.csv
 influxdb
 app.env
+.vscode
