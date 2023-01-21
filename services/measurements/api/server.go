@@ -14,13 +14,25 @@ type Server struct {
 	store  measurementdb.Store
 }
 
-func NewServer(store measurementdb.Store) *Server {
+func NewServer(store measurementdb.Store, creds *Credentials) *Server {
 	s := &Server{
 		engine: gin.Default(),
 		store:  store,
 	}
 	s.setupRoutes()
+	s.setupAuth(creds)
 	return s
+}
+
+type Credentials struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+func (s *Server) setupAuth(creds *Credentials) {
+	s.engine.Use(gin.BasicAuth(gin.Accounts{
+		creds.Username: creds.Password,
+	}))
 }
 
 func (s *Server) setupRoutes() {

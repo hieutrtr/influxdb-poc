@@ -2,6 +2,7 @@ package measurementapi
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"net/http/httptest"
@@ -51,9 +52,13 @@ func TestHandleListMeasurements(t *testing.T) {
 			defer ctrl.Finish()
 			store := mocks.NewMockStore(ctrl)
 			tc.buildStub(store)
-			s := NewServer(store)
+			s := NewServer(store, &Credentials{
+				Username: "admin",
+				Password: "admin",
+			})
 			recorder := httptest.NewRecorder()
 			req := httptest.NewRequest("GET", "/measurements", nil)
+			req.Header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte("admin:admin")))
 			s.engine.ServeHTTP(recorder, req)
 			tc.checkResponse(t, recorder)
 		})
@@ -112,7 +117,10 @@ func TestHandleCreateMeasurement(t *testing.T) {
 			defer ctrl.Finish()
 			store := mocks.NewMockStore(ctrl)
 			tc.buildStub(store)
-			s := NewServer(store)
+			s := NewServer(store, &Credentials{
+				Username: "admin",
+				Password: "admin",
+			})
 			recorder := httptest.NewRecorder()
 			data := createMeasurementRequest{
 				Name:        tc.meaName,
@@ -120,6 +128,7 @@ func TestHandleCreateMeasurement(t *testing.T) {
 			}
 			body, _ := json.Marshal(data)
 			req := httptest.NewRequest("POST", "/measurements", bytes.NewBuffer(body))
+			req.Header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte("admin:admin")))
 			s.engine.ServeHTTP(recorder, req)
 			tc.checkResponse(t, recorder)
 		})
@@ -185,9 +194,13 @@ func TestHandleGetMeasurement(t *testing.T) {
 			defer ctrl.Finish()
 			store := mocks.NewMockStore(ctrl)
 			tc.buildStub(store)
-			s := NewServer(store)
+			s := NewServer(store, &Credentials{
+				Username: "admin",
+				Password: "admin",
+			})
 			recorder := httptest.NewRecorder()
 			req := httptest.NewRequest("GET", fmt.Sprintf("/measurements/%s", tc.meaID), nil)
+			req.Header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte("admin:admin")))
 			s.engine.ServeHTTP(recorder, req)
 			tc.checkResponse(t, recorder)
 		})

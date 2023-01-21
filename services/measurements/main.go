@@ -25,7 +25,10 @@ func main() {
 	defer client.Disconnect(ctx)
 	collection := client.Database(conf.MongoDB).Collection(conf.MongoCollection)
 	store := measurementdb.NewMeasurementStore(collection)
-	server := measurementapi.NewServer(store)
+	server := measurementapi.NewServer(store, &measurementapi.Credentials{
+		Username: conf.BasicAuthUsername,
+		Password: conf.BasicAuthPassword,
+	})
 	err = server.Run(conf.ServerAddress)
 	if err != nil {
 		panic(err)
