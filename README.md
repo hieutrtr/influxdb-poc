@@ -47,3 +47,7 @@ following download guide in `https://portal.influxdata.com/downloads/`
 - platform will implement server gRPC.
 - struct of measurement to stream and line protocol as string
 - Create a new stream
+
+#### analytics
+- create a pipeline by adding analytics steps (join, aggregation).
+- each of pipeline steps output should be a new measurement.
