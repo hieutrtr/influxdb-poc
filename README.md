@@ -1,5 +1,5 @@
 # POC InfluxDB
-Im going to try influxdb on some sensors data.
+ Providing real-time analytics APIs for time series data based on InfluxDB can be a great way to enable other developers to easily build an IoT platform. By creating these APIs, other developers can access and query the data stored in InfluxDB without the need for additional software or expertise.
 
 #### Loading Data
 - download data from [pump-sensor-data kaggle](https://www.kaggle.com/datasets/nphantawee/pump-sensor-data) into `resources/`
