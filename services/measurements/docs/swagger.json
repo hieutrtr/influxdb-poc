@@ -1,0 +1,279 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/measurements": {
+            "get": {
+                "description": "List all measurements in the database with pagination support",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "measurements"
+                ],
+                "summary": "List all measurements in the database",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Limit the number of measurements returned",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 0,
+                        "description": "Offset the number of measurements returned",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/GetMeasurementResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a new measurement in the database with the given name and description",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "measurements"
+                ],
+                "summary": "Create a new measurement",
+                "parameters": [
+                    {
+                        "description": "Create measurement request",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/CreateMeasurementRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/CreateMeasurementResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/measurements/{id}": {
+            "get": {
+                "description": "Get a measurement by ID from the database",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "measurements"
+                ],
+                "summary": "Get a measurement by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Measurement ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/GetMeasurementResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Archive a measurement by ID from the database",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "measurements"
+                ],
+                "summary": "Archive a measurement by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Measurement ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ArchivedMeasurementResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "ArchivedMeasurementResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "ID of the measurement",
+                    "type": "string",
+                    "example": "5f1f2c5b5b9b9b0b5c1c1c1c"
+                },
+                "message": {
+                    "description": "Message of the archived measurement",
+                    "type": "string",
+                    "example": "Archived measurement"
+                }
+            }
+        },
+        "CreateMeasurementRequest": {
+            "type": "object",
+            "required": [
+                "description",
+                "name"
+            ],
+            "properties": {
+                "description": {
+                    "description": "Description of the measurement",
+                    "type": "string",
+                    "example": "Temperature measurement in Celsius"
+                },
+                "name": {
+                    "description": "Name of the measurement",
+                    "type": "string",
+                    "example": "temperature"
+                }
+            }
+        },
+        "CreateMeasurementResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "ID of the measurement",
+                    "type": "string",
+                    "example": "5f1f2c5b5b9b9b0b5c1c1c1c"
+                }
+            }
+        },
+        "ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "description": "Error message",
+                    "type": "string",
+                    "example": "error message"
+                }
+            }
+        },
+        "GetMeasurementResponse": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "description": "Description of the measurement",
+                    "type": "string",
+                    "example": "Temperature measurement in Celsius"
+                },
+                "id": {
+                    "description": "ID of the measurement",
+                    "type": "string",
+                    "example": "5f1f2c5b5b9b9b0b5c1c1c1c"
+                },
+                "name": {
+                    "description": "Name of the measurement",
+                    "type": "string",
+                    "example": "temperature"
+                },
+                "status": {
+                    "description": "Status of the measurement",
+                    "type": "string",
+                    "example": "active"
+                }
+            }
+        }
+    }
+}

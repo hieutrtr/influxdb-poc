@@ -1,0 +1,190 @@
+definitions:
+  ArchivedMeasurementResponse:
+    properties:
+      id:
+        description: ID of the measurement
+        example: 5f1f2c5b5b9b9b0b5c1c1c1c
+        type: string
+      message:
+        description: Message of the archived measurement
+        example: Archived measurement
+        type: string
+    type: object
+  CreateMeasurementRequest:
+    properties:
+      description:
+        description: Description of the measurement
+        example: Temperature measurement in Celsius
+        type: string
+      name:
+        description: Name of the measurement
+        example: temperature
+        type: string
+    required:
+    - description
+    - name
+    type: object
+  CreateMeasurementResponse:
+    properties:
+      id:
+        description: ID of the measurement
+        example: 5f1f2c5b5b9b9b0b5c1c1c1c
+        type: string
+    type: object
+  ErrorResponse:
+    properties:
+      error:
+        description: Error message
+        example: error message
+        type: string
+    type: object
+  GetMeasurementResponse:
+    properties:
+      description:
+        description: Description of the measurement
+        example: Temperature measurement in Celsius
+        type: string
+      id:
+        description: ID of the measurement
+        example: 5f1f2c5b5b9b9b0b5c1c1c1c
+        type: string
+      name:
+        description: Name of the measurement
+        example: temperature
+        type: string
+      status:
+        description: Status of the measurement
+        example: active
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /measurements:
+    get:
+      consumes:
+      - application/json
+      description: List all measurements in the database with pagination support
+      parameters:
+      - default: 10
+        description: Limit the number of measurements returned
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: Offset the number of measurements returned
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/GetMeasurementResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      summary: List all measurements in the database
+      tags:
+      - measurements
+    post:
+      consumes:
+      - application/json
+      description: Create a new measurement in the database with the given name and
+        description
+      parameters:
+      - description: Create measurement request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/CreateMeasurementRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/CreateMeasurementResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      summary: Create a new measurement
+      tags:
+      - measurements
+  /measurements/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Archive a measurement by ID from the database
+      parameters:
+      - description: Measurement ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ArchivedMeasurementResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      summary: Archive a measurement by ID
+      tags:
+      - measurements
+    get:
+      consumes:
+      - application/json
+      description: Get a measurement by ID from the database
+      parameters:
+      - description: Measurement ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/GetMeasurementResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      summary: Get a measurement by ID
+      tags:
+      - measurements
+swagger: "2.0"
