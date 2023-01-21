@@ -3,9 +3,15 @@ package utils
 import "github.com/spf13/viper"
 
 type Config struct {
-	InfluxDBToken  string `mapstructure:"INFLUXDB_TOKEN"`
-	InfluxDBOrg    string `mapstructure:"INFLUXDB_ORG"`
-	InfluxDBBucket string `mapstructure:"INFLUXDB_BUCKET"`
+	InfluxDBToken     string `mapstructure:"INFLUXDB_TOKEN"`
+	InfluxDBOrg       string `mapstructure:"INFLUXDB_ORG"`
+	InfluxDBBucket    string `mapstructure:"INFLUXDB_BUCKET"`
+	MongoURL          string `mapstructure:"MONGO_URL"`
+	MongoDB           string `mapstructure:"MONGO_DB"`
+	MongoCollection   string `mapstructure:"MONGO_COLLECTION"`
+	ServerAddress     string `mapstructure:"SERVER_ADDRESS"`
+	BasicAuthUsername string `mapstructure:"BASIC_AUTH_USERNAME"`
+	BasicAuthPassword string `mapstructure:"BASIC_AUTH_PASSWORD"`
 }
 
 // LoadConfig loads config from path

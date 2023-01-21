@@ -17,6 +17,7 @@ func CreateMeasurement(t *testing.T) Measurement {
 	insertedResult, err := testStore.CreateMeasurement(context.TODO(), arg)
 	require.NoError(t, err)
 	arg.ID = insertedResult.ID
+	arg.Status = "active"
 	return arg
 }
 
@@ -41,7 +42,7 @@ func TestListMeasurements(t *testing.T) {
 	arg := CreateMeasurement(t)
 	t.Logf("Measurement: %v", arg)
 	measurements, err := testStore.ListMeasurements(context.TODO(), 10, 0)
-	t.Logf("Inserted Measurement: %v", measurements)
+	t.Logf("List Measurements: %v", measurements)
 	require.NoError(t, err)
 	require.Equal(t, arg.ID, measurements[0].ID)
 	require.Equal(t, arg.Name, measurements[0].Name)

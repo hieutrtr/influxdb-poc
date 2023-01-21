@@ -66,7 +66,7 @@ func (m *MeasurementStore) GetMeasurement(ctx context.Context, meaID Measurement
 
 func (m *MeasurementStore) ListMeasurements(ctx context.Context, limit int64, skip int64) ([]Measurement, error) {
 	var measurements []Measurement
-	cursor, err := m.collection.Find(ctx, Measurement{Status: "active"}, options.Find().SetSort(map[string]int{"_id": -1}).SetLimit(limit).SetSkip(skip))
+	cursor, err := m.collection.Find(ctx, bson.M{"status": "active"}, options.Find().SetSort(map[string]int{"_id": -1}).SetLimit(limit).SetSkip(skip))
 	if err != nil {
 		return nil, NewDBError(err.Error(), 500)
 	}
